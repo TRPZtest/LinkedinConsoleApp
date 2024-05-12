@@ -4,11 +4,15 @@ using System;
 using System.Diagnostics;
 using System.Net;
 
-var service = new AuthorizationCodeService();
+var codeService = new AuthorizationCodeService();
 
-var code = await service.GetOAuthCode();
+var code = await codeService.GetOAuthCode();
 
-Console.WriteLine(code);
+var accessTokenService = new AccessTokenService();
+
+var token = await accessTokenService.GetAccessToken(code);
+
+
 
 
 

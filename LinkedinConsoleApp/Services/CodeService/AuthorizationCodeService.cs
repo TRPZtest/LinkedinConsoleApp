@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace LinkedinConsoleApp.Services
+namespace LinkedinConsoleApp.Services.CodeService
 {
     public class AuthorizationCodeService
     {
@@ -18,9 +18,8 @@ namespace LinkedinConsoleApp.Services
         private const string URL_BASE = "https://www.linkedin.com/oauth/v2/authorization";
 
         public async Task<string> GetOAuthCode()
-        {         
-            string redirectUri = $"http://{IPAddress.Loopback}:{GetRandomUnusedPort()}/";
-            using var client = new HttpClient();          
+        {
+            using var client = new HttpClient();
 
             var parameters = new Dictionary<string, string>
             {
@@ -37,34 +36,41 @@ namespace LinkedinConsoleApp.Services
             httpListener.Prefixes.Add(REDIRECT_URL);
             httpListener.Start();
 
+            // open browser
             Process.Start(new ProcessStartInfo() { FileName = url, UseShellExecute = true });
 
-            // Waits for the OAuth authorization response.
+            // wait for the callback
             var context = await httpListener.GetContextAsync();
-            var response = context.Response;
-
-            byte[] buffer = Encoding.UTF8.GetBytes(Helpers.GetSuccessHtmlPage());
-            response.ContentLength64 = buffer.Length;
-            var responseOutput = response.OutputStream;
-            await responseOutput.WriteAsync(buffer, 0, buffer.Length);
-            responseOutput.Close();
-            httpListener.Stop();
 
             var code = context.Request.QueryString.Get("code");
+            var response = context.Response;
+            var responseOutput = response.OutputStream;
 
-            if (string.IsNullOrEmpty(code))
-                throw new Exception("Error while getting OAuth code");
+            byte[] buffer = Array.Empty<byte>();
+            try
+            {
+                if (string.IsNullOrEmpty(code))
+                {
+                    buffer = Encoding.UTF8.GetBytes(Helpers.GetErrorHtmlPage());
+                    response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    response.ContentLength64 = buffer.Length;
+
+                    throw new Exception("Error while getting code");
+                }
+                else
+                {
+                    buffer = Encoding.UTF8.GetBytes(Helpers.GetSuccessHtmlPage());
+                    response.ContentLength64 = buffer.Length;
+                }
+            }
+            finally
+            {
+                await responseOutput.WriteAsync(buffer, 0, buffer.Length);
+                httpListener.Stop();
+                responseOutput.Close();
+            }
+
             return code;
         }
-
-        public static int GetRandomUnusedPort()
-        {
-            var listener = new TcpListener(IPAddress.Loopback, 0);
-            listener.Start();
-            var port = ((IPEndPoint)listener.LocalEndpoint).Port;
-            listener.Stop();
-            return port;
-        }
-
     }
 }
