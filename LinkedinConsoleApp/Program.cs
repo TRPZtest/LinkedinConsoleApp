@@ -2,6 +2,7 @@
 using LinkedinConsoleApp.Services;
 using LinkedinConsoleApp.Services.AccessTokenService;
 using LinkedinConsoleApp.Services.CodeService;
+using LinkedinConsoleApp.Services.SavePhotoService;
 using LinkedinConsoleApp.Services.UserInfoService;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -20,6 +21,10 @@ var userInfoService = new UserInfoService();
 
 var userInfo = await userInfoService.GetUserInfo(token);
 
+var savePhotoService = new SavePhotoService();
 
+await savePhotoService.SavePhoto(userInfo.Picture, token);
+
+Console.WriteLine("The end!");
 
 
