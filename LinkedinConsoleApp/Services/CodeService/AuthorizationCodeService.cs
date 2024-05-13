@@ -21,16 +21,15 @@ namespace LinkedinConsoleApp.Services.CodeService
         {
             using var client = new HttpClient();
 
-            var parameters = new Dictionary<string, string>
+            var parameters = new[]
             {
-                { "client_id", CLIENT_ID },
-                { "response_type", "code" },
-                { "scope", "profile" },
-                { "redirect_uri", REDIRECT_URL }
+                new KeyValuePair<string, string>( "client_id", CLIENT_ID ),
+                new KeyValuePair<string, string>( "response_type", "code" ),
+                new KeyValuePair<string, string>( "scope", "openid profile" ),             
+                new KeyValuePair<string, string>( "redirect_uri", REDIRECT_URL )
             };
-
-            // Url with query string
-            var url = QueryHelpers.AddQueryString(URL_BASE, parameters);
+    
+            var url = QueryHelpers.AddQueryString(URL_BASE, parameters); 
 
             using var httpListener = new HttpListener();
             httpListener.Prefixes.Add(REDIRECT_URL);
@@ -69,7 +68,7 @@ namespace LinkedinConsoleApp.Services.CodeService
                 httpListener.Stop();
                 responseOutput.Close();
             }
-
+            
             return code;
         }
     }

@@ -1,6 +1,10 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using LinkedinConsoleApp.Services;
+using LinkedinConsoleApp.Services.AccessTokenService;
+using LinkedinConsoleApp.Services.CodeService;
+using LinkedinConsoleApp.Services.UserInfoService;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Net;
 
@@ -12,6 +16,9 @@ var accessTokenService = new AccessTokenService();
 
 var token = await accessTokenService.GetAccessToken(code);
 
+var userInfoService = new UserInfoService();
+
+var userInfo = await userInfoService.GetUserInfo(token);
 
 
 

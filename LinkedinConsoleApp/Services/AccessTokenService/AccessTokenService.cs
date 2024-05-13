@@ -37,10 +37,8 @@ namespace LinkedinConsoleApp.Services.AccessTokenService
                 throw new Exception("Exchanging code to token error");
 
             var tokenResponse = await response.Content.ReadFromJsonAsync<AccessTokenResponse>();
-
+   
             return tokenResponse.AccessToken;
         }
-
-
     }
 }

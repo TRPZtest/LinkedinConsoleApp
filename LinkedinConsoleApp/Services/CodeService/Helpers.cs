@@ -36,8 +36,7 @@ namespace LinkedinConsoleApp.Services.CodeService
                     <title>Authorized</title>
                 </head>
                 <body>
-                    <h1>Authorized</h1>
-                    <p>AuthorizationError.</p>
+                    <h1>Authorization Error</h1>                   
                 </body>
                 </html>";
         }

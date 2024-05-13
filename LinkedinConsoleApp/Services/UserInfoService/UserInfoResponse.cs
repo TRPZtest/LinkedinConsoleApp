@@ -23,10 +23,7 @@ namespace LinkedinConsoleApp.Services.UserInfoService
 
         [JsonPropertyName("picture")]
         public string Picture { get; set; }
-
-        [JsonPropertyName("locale")]
-        public string Locale { get; set; }
-
+      
         [JsonPropertyName("email")]
         public string Email { get; set; }
 
